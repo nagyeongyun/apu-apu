@@ -11,7 +11,9 @@ export default {
       fontFamily: {
         pretendard: ['var(--font-pretendard)'],
       },
-      colors: {},
+      colors: {
+        main: '#1E85CF',
+      },
     },
   },
   plugins: [],

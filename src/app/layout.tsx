@@ -6,6 +6,7 @@ const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
   display: 'swap',
   variable: '--font-pretendard',
+  weight: '45 920',
 });
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
-      <body>{children}</body>
+      <body className="text-neutral-900 font-light">{children}</body>
     </html>
   );
 }
