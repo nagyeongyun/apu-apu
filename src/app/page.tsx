@@ -1,8 +1,18 @@
 import Script from 'next/script';
 import Nav from '@/components/layout/Nav';
 import Map from '@/components/main/Map';
+import { createClient } from '@/utils/supabase/server';
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: coordinates, error } = await supabase
+    .from('pools')
+    .select('latitude, longitude');
+
+  if (error) {
+    console.error('Error fetching coordinates:', error.message);
+  }
+
   return (
     <>
       <Script
@@ -12,7 +22,7 @@ export default function Home() {
       <main className="my-[1.3rem]">
         <Nav />
         <div className="mx-[20rem] mt-8 border border-gray-200">
-          <Map />
+          <Map coordinates={coordinates || []} />
         </div>
       </main>
     </>

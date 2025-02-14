@@ -10,6 +10,8 @@
     "vercel-deploy": "next build && next export"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.48.1",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -3,12 +3,13 @@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { Coordinates, NaverMap } from '@/types/map';
+import { MapProps } from '@/types/mapType';
 
 const mapId = 'map';
-const initMapLevel = 16;
+const initMapLevel = 14;
 const initLoc: Coordinates = [37.5666103, 126.9783882];
 
-export default function Map() {
+export default function Map({ coordinates }: MapProps) {
   const mapRef = useRef<NaverMap | null>(null);
   const [loc, setLoc] = useState<Coordinates>(initLoc);
   const [address, setAddress] = useState<string>('위치 로드중...');
@@ -59,11 +60,26 @@ export default function Map() {
   };
 
   useEffect(() => {
+    // 지도 그리기
     if (!mapRef.current) {
       mapRef.current = new naver.maps.Map(mapId, {
         center: new naver.maps.LatLng(loc[0], loc[1]),
         zoom: initMapLevel,
         minZoom: 7,
+      });
+    }
+
+    // 마커 표시
+    if (mapRef.current) {
+      coordinates.forEach(({ latitude, longitude }) => {
+        new naver.maps.Marker({
+          map: mapRef.current ?? undefined,
+          position: new naver.maps.LatLng(latitude, longitude),
+          icon: {
+            url: '/images/pool-marker.svg',
+            scaledSize: new naver.maps.Size(40, 40),
+          },
+        });
       });
     }
 
