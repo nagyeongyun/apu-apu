@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { Coordinates, NaverMap } from '@/types/map';
-import { MapProps } from '@/types/mapType';
+import { MapProps } from '@/types/map.types';
 
 const mapId = 'map';
 const initMapLevel = 14;
@@ -21,11 +21,8 @@ export default function Map({ coordinates }: MapProps) {
       { coords: newCenter },
       (status, response) => {
         if (status === naver.maps.Service.Status.OK) {
-          const newAddress =
-            response.v2.address.jibunAddress || '현재 위치를 찾을 수 없습니다.';
+          const newAddress = response.v2.address.jibunAddress;
           setAddress(newAddress);
-        } else {
-          setAddress('현재 위치를 찾을 수 없습니다.');
         }
       },
     );
@@ -50,12 +47,28 @@ export default function Map({ coordinates }: MapProps) {
         },
         () => {
           console.error('위치 권한 거부');
-          updateAddress(initLoc); // 기본 위치로 설정
+          setAddress('현재 위치를 찾을 수 없습니다.');
         },
       );
     } else {
       console.error('Geolocation error');
-      updateAddress(initLoc);
+      setAddress('현재 위치를 찾을 수 없습니다.');
+    }
+  };
+
+  // 마커 표시하기
+  const createMarkers = () => {
+    if (mapRef.current) {
+      coordinates.forEach(({ latitude, longitude }) => {
+        new naver.maps.Marker({
+          map: mapRef.current as naver.maps.Map,
+          position: new naver.maps.LatLng(latitude, longitude),
+          icon: {
+            url: '/images/pool-marker.svg',
+            scaledSize: new naver.maps.Size(40, 40),
+          },
+        });
+      });
     }
   };
 
@@ -69,26 +82,13 @@ export default function Map({ coordinates }: MapProps) {
       });
     }
 
-    // 마커 표시
-    if (mapRef.current) {
-      coordinates.forEach(({ latitude, longitude }) => {
-        new naver.maps.Marker({
-          map: mapRef.current ?? undefined,
-          position: new naver.maps.LatLng(latitude, longitude),
-          icon: {
-            url: '/images/pool-marker.svg',
-            scaledSize: new naver.maps.Size(40, 40),
-          },
-        });
-      });
-    }
-
+    createMarkers();
     getCurrentLocation();
   }, []);
 
   return (
     <div className="flex flex-row">
-      <div id={mapId} className="w-[60%] h-[550px]"></div>
+      <div id={mapId} className="w-[60%] h-[550px] bg-gray-100"></div>
       <div className="flex-grow px-4 py-3">
         <div className="flex items-center text-[1rem]">
           <button
