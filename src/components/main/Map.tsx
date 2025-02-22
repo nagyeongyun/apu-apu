@@ -3,16 +3,26 @@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { Coordinates, NaverMap } from '@/types/map';
-import { MapProps } from '@/types/map.types';
+import { PoolInfo } from '@/types/pool';
+import { usePoolStore } from '@/store/poolStore';
 
 const mapId = 'map';
 const initMapLevel = 14;
 const initLoc: Coordinates = [37.5666103, 126.9783882];
 
-export default function Map({ coordinates }: MapProps) {
+export default function Map({ pools }: { pools: PoolInfo[] }) {
   const mapRef = useRef<NaverMap | null>(null);
   const [loc, setLoc] = useState<Coordinates>(initLoc);
   const [address, setAddress] = useState<string>('위치 로드중...');
+  const { selectedPoolId, setSelectedPoolId } = usePoolStore();
+
+  // 지도 중심 업데이트
+  const updateMapCenter = (newCenter: naver.maps.LatLng) => {
+    if (mapRef.current) {
+      mapRef.current.setCenter(newCenter);
+      mapRef.current.setZoom(initMapLevel);
+    }
+  };
 
   // 주소 가져오기
   const updateAddress = (coordinates: Coordinates) => {
@@ -23,19 +33,18 @@ export default function Map({ coordinates }: MapProps) {
         if (status === naver.maps.Service.Status.OK) {
           const newAddress = response.v2.address.jibunAddress;
           setAddress(newAddress);
+          updateMapCenter(newCenter);
+        } else {
+          console.error('Address error');
+          setAddress('주소를 찾을 수 없습니다.');
         }
       },
     );
-
-    if (mapRef.current) {
-      mapRef.current.setCenter(newCenter);
-      mapRef.current.setZoom(initMapLevel);
-    }
   };
 
   // 현재 위치 가져오기
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
+    try {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const currentLoc: Coordinates = [
@@ -50,26 +59,43 @@ export default function Map({ coordinates }: MapProps) {
           setAddress('현재 위치를 찾을 수 없습니다.');
         },
       );
-    } else {
-      console.error('Geolocation error');
+    } catch (error) {
+      console.error('Geolocation error', error);
       setAddress('현재 위치를 찾을 수 없습니다.');
     }
   };
 
   // 마커 표시하기
   const createMarkers = () => {
-    if (mapRef.current) {
-      coordinates.forEach(({ latitude, longitude }) => {
-        new naver.maps.Marker({
-          map: mapRef.current as naver.maps.Map,
-          position: new naver.maps.LatLng(latitude, longitude),
-          icon: {
-            url: '/images/pool-marker.svg',
-            scaledSize: new naver.maps.Size(40, 40),
-          },
-        });
+    if (!mapRef.current) return;
+
+    pools.forEach(({ id, name, latitude, longitude }) => {
+      const marker = new naver.maps.Marker({
+        map: mapRef.current as naver.maps.Map,
+        position: new naver.maps.LatLng(latitude, longitude),
+        icon: {
+          url: '/images/pool-marker.svg',
+          scaledSize: new naver.maps.Size(40, 40),
+        },
       });
-    }
+
+      // 마커 호버 시 이름 표시
+      const infoWindow = new naver.maps.InfoWindow({
+        content: `<div style="padding:3px 6px; font-size: 14px; font-family: var(--font-pretendard);">${name}</div>`,
+      });
+
+      naver.maps.Event.addListener(marker, 'mouseover', () =>
+        infoWindow.open(mapRef.current!, marker),
+      );
+      naver.maps.Event.addListener(marker, 'mouseout', () =>
+        infoWindow.close(),
+      );
+
+      // 마커 클릭 시 상태 업데이트
+      naver.maps.Event.addListener(marker, 'click', () => {
+        setSelectedPoolId(id);
+      });
+    });
   };
 
   useEffect(() => {
@@ -88,7 +114,7 @@ export default function Map({ coordinates }: MapProps) {
 
   return (
     <div className="flex flex-row">
-      <div id={mapId} className="w-[60%] h-[550px] bg-gray-100"></div>
+      <div id={mapId} className="w-[65%] h-[550px] bg-gray-100"></div>
       <div className="flex-grow px-4 py-3">
         <div className="flex items-center text-[1rem]">
           <button
