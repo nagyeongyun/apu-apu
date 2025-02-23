@@ -2,7 +2,7 @@ import Script from 'next/script';
 import Nav from '@/components/layout/Nav';
 import Map from '@/components/main/Map';
 import { PoolInfo } from '@/types/pool';
-import { getPoolInfo } from '@/services/map';
+import { getPoolInfo } from '@/services/server/map';
 
 export default async function Home() {
   let pools: PoolInfo[] = [];
@@ -21,7 +21,7 @@ export default async function Home() {
       />
       <main className="my-[1.3rem]">
         <Nav />
-        <div className="mx-[20rem] mt-8 border border-gray-200">
+        <div className="mx-[20rem] h-[550px] mt-8 border border-gray-200">
           <Map pools={pools} />
         </div>
       </main>
