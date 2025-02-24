@@ -13,8 +13,9 @@ const initCoord: Coordinates = [37.5666103, 126.9783882];
 
 export default function Map({ pools }: { pools: PoolInfo[] }) {
   const mapRef = useRef<NaverMap | null>(null);
+  const markersRef = useRef<naver.maps.Marker[]>([]);
   const [coord, setCoord] = useState<Coordinates>(initCoord);
-  const [address, setAddress] = useState<string>('위치 로드중...');
+  const [address, setAddress] = useState<string>('현재 위치 찾는중...');
   const [nearbyPools, setNearbyPools] = useState<NearByPool[]>([]);
   const { selectedPoolId, setSelectedPoolId } = usePoolStore();
 
@@ -87,7 +88,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
 
     pools.forEach(({ id, name, latitude, longitude }) => {
       const marker = new naver.maps.Marker({
-        map: mapRef.current as naver.maps.Map,
+        map: mapRef.current as NaverMap,
         position: new naver.maps.LatLng(latitude, longitude),
         icon: {
           url: '/images/pool-marker.svg',
@@ -115,7 +116,36 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       naver.maps.Event.addListener(marker, 'click', () => {
         setSelectedPoolId(id);
       });
+
+      markersRef.current.push(marker);
     });
+  };
+
+  // 마커 표시
+  const showMarker = (map: NaverMap, marker: naver.maps.Marker) => {
+    marker.setMap(map);
+  };
+
+  // 마커 숨김
+  const hideMarker = (marker: naver.maps.Marker) => {
+    marker.setMap(null);
+  };
+
+  // 마커 업데이트 유무 판별 함수
+  const updateMarkers = (map: NaverMap, markers: naver.maps.Marker[]) => {
+    const mapBounds = map.getBounds() as naver.maps.LatLngBounds;
+
+    if (!mapBounds) return;
+
+    for (let i = 0; i < markers.length; i += 1) {
+      const position = markers[i].getPosition();
+
+      if (mapBounds.hasLatLng(position)) {
+        showMarker(map, markers[i]);
+      } else {
+        hideMarker(markers[i]);
+      }
+    }
   };
 
   useEffect(() => {
@@ -130,6 +160,19 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
 
     createMarkers();
     getCurrentLocation();
+
+    // 지도 줌 인아웃 시 마커 업데이트
+    naver.maps.Event.addListener(mapRef.current, 'zoom_changed', () => {
+      if (mapRef.current !== null) {
+        updateMarkers(mapRef.current, markersRef.current);
+      }
+    });
+    // 지도 드래그 시 마커 업데이트
+    naver.maps.Event.addListener(mapRef.current, 'dragend', () => {
+      if (mapRef.current !== null) {
+        updateMarkers(mapRef.current, markersRef.current);
+      }
+    });
   }, []);
 
   return (
@@ -148,7 +191,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
         <div
           className={`flex flex-col max-h-[485px] overflow-y-auto mx-1 my-3 [&::-webkit-scrollbar]:hidden`}
         >
-          <p className="text-[0.85rem] mb-1">주변 5km 내 수영장</p>
+          <p className="text-[0.85rem] mb-1">현재 위치 5km 내 수영장</p>
           {nearbyPools.map((pool) => (
             <div key={pool.id} className="text-[0.8rem]">
               <div className="flex items-center mb-1">
