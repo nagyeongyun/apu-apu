@@ -9,6 +9,8 @@ export interface PoolInfo {
 export interface NearByPool {
   id: string;
   name: string;
+  latitude: number;
+  longitude: number;
   road_address: string;
   jibun_address: string;
   dist_meters: number;

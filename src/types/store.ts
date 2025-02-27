@@ -1,4 +1,6 @@
+import { Coordinates } from '@/types/map';
+
 export interface PoolStore {
-  selectedPoolId: string | null;
-  setSelectedPoolId: (id: string | null) => void;
+  selectedPool: { id: string | null; coords: Coordinates | null } | null;
+  setSelectedPool: (id: string, coords: Coordinates) => void;
 }

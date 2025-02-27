@@ -17,7 +17,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   const [coord, setCoord] = useState<Coordinates>(initCoord);
   const [address, setAddress] = useState<string>('현재 위치 찾는중...');
   const [nearbyPools, setNearbyPools] = useState<NearByPool[]>([]);
-  const { selectedPoolId, setSelectedPoolId } = usePoolStore();
+  const { selectedPool, setSelectedPool } = usePoolStore();
 
   // 지도 중심 업데이트
   const updateMapCenter = (newCenter: naver.maps.LatLng) => {
@@ -86,7 +86,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   const createMarkers = () => {
     if (!mapRef.current) return;
 
-    pools.forEach(({ id, name, latitude, longitude }) => {
+    pools.forEach(({ name, latitude, longitude }) => {
       const marker = new naver.maps.Marker({
         map: mapRef.current as NaverMap,
         position: new naver.maps.LatLng(latitude, longitude),
@@ -95,6 +95,8 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
           scaledSize: new naver.maps.Size(40, 40),
         },
       });
+
+      console.log(selectedPool);
 
       // 마커 호버 시 이름 표시
       const infoWindow = new naver.maps.InfoWindow({
@@ -112,10 +114,10 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
         infoWindow.close(),
       );
 
-      // 마커 클릭 시 상태 업데이트
-      naver.maps.Event.addListener(marker, 'click', () => {
-        setSelectedPoolId(id);
-      });
+      // // 마커 클릭 시 상태 업데이트
+      // naver.maps.Event.addListener(marker, 'click', () => {
+      //   setSelectedPool(id);
+      // });
 
       markersRef.current.push(marker);
     });
@@ -131,7 +133,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
     marker.setMap(null);
   };
 
-  // 마커 업데이트 유무 판별 함수
+  // 마커 업데이트 유무 체크
   const updateMarkers = (map: NaverMap, markers: naver.maps.Marker[]) => {
     const mapBounds = map.getBounds() as naver.maps.LatLngBounds;
 
@@ -148,6 +150,13 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
     }
   };
 
+  // 리스트에서 수영장 클릭
+  const handlePoolClick = (id: string, coords: Coordinates) => {
+    setSelectedPool(id, coords);
+    const [lat, lng] = coords;
+    updateMapCenter(new naver.maps.LatLng(lat, lng));
+  };
+
   useEffect(() => {
     // 지도 그리기
     if (!mapRef.current) {
@@ -161,13 +170,13 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
     createMarkers();
     getCurrentLocation();
 
-    // 지도 줌 인아웃 시 마커 업데이트
+    // 줌 인아웃 시 마커 업데이트
     naver.maps.Event.addListener(mapRef.current, 'zoom_changed', () => {
       if (mapRef.current !== null) {
         updateMarkers(mapRef.current, markersRef.current);
       }
     });
-    // 지도 드래그 시 마커 업데이트
+    // 드래그 시 마커 업데이트
     naver.maps.Event.addListener(mapRef.current, 'dragend', () => {
       if (mapRef.current !== null) {
         updateMarkers(mapRef.current, markersRef.current);
@@ -193,7 +202,13 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
         >
           <p className="text-[0.85rem] mb-1">현재 위치 5km 내 수영장</p>
           {nearbyPools.map((pool) => (
-            <div key={pool.id} className="text-[0.8rem]">
+            <div
+              key={pool.id}
+              onClick={() =>
+                handlePoolClick(pool.id, [pool.latitude, pool.longitude])
+              }
+              className="text-[0.8rem] cursor-pointer"
+            >
               <div className="flex items-center mb-1">
                 <p className="text-[0.95rem] font-medium mr-2">{pool.name}</p>
                 <p className="text-neutral-400">
@@ -204,7 +219,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
               </div>
               <p className="">{pool.road_address}</p>
               <p>리뷰 별점 들어갈 곳</p>
-              <hr className="my-3" />
+              <hr className="my-3 cursor-default" />
             </div>
           ))}
         </div>
