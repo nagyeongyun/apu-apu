@@ -13,6 +13,7 @@ export default {
       },
       colors: {
         main: '#1E85CF',
+        'main-100': '#ebf2f8',
       },
     },
   },

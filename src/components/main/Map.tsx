@@ -186,13 +186,13 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   }, []);
 
   return (
-    <div className="flex flex-row h-full">
-      <div id={mapId} className="w-[65%] bg-gray-100"></div>
-      <div className="flex-grow px-4 py-3">
+    <div className="flex-1 h-full relative">
+      <div id={mapId} className="w-full h-full bg-gray-100" />
+      <div className="absolute inset-y-10 right-10 w-[19%] bg-white p-5 rounded-lg pt-6 pb-16 shadow-md">
         <div className="flex items-center text-[1rem]">
           <button
             onClick={getCurrentLocation}
-            className="mr-2 border border-neutral-300 shadow p-[0.2rem] rounded hover:bg-neutral-100"
+            className="mr-2 border border-neutral-300 shadow p-[0.3rem] rounded-xl hover:bg-neutral-100"
           >
             <Image src="/images/gps.svg" alt="gps-icon" width={13} height={0} />
           </button>
