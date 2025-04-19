@@ -15,6 +15,7 @@ const initCoord: Coordinates = [37.5666103, 126.9783882];
 export default function Map({ pools }: { pools: PoolInfo[] }) {
   const mapRef = useRef<NaverMap | null>(null);
   const markersRef = useRef<naver.maps.Marker[]>([]);
+  const userMarkerRef = useRef<naver.maps.Marker | null>(null);
   const [coord, setCoord] = useState<Coordinates>(initCoord);
   const [address, setAddress] = useState<string>('현재 위치 찾는중...');
   const [nearbyPools, setNearbyPools] = useState<NearByPool[]>([]);
@@ -85,6 +86,43 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
           ];
           setCoord(currentLoc);
           updateAddress(currentLoc);
+
+          if (mapRef.current) {
+            const userPosition = new naver.maps.LatLng(
+              currentLoc[0],
+              currentLoc[1],
+            );
+
+            if (userMarkerRef.current) {
+              userMarkerRef.current.setMap(null);
+            }
+
+            const userMarker = new naver.maps.Marker({
+              position: userPosition,
+              map: mapRef.current,
+              icon: {
+                url: '/images/user-marker.svg',
+                scaledSize: new naver.maps.Size(30, 30),
+              },
+            });
+
+            const infoWindow = new naver.maps.InfoWindow({
+              content: `<div style="padding:3px 5px; font-size: 12px; font-family: var(--font-pretendard);">YOU</div>`,
+              anchorSize: {
+                width: 8,
+                height: 7,
+              },
+            });
+
+            naver.maps.Event.addListener(userMarker, 'mouseover', () =>
+              infoWindow.open(mapRef.current!, userMarker),
+            );
+            naver.maps.Event.addListener(userMarker, 'mouseout', () =>
+              infoWindow.close(),
+            );
+
+            userMarkerRef.current = userMarker;
+          }
         },
         () => {
           console.error('위치 권한 거부');
