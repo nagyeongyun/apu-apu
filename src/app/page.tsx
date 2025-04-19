@@ -23,7 +23,7 @@ export default async function Home() {
       <main className="h-screen w-screen flex flex-col">
         <Nav />
         <div className="flex flex-row flex-1">
-          <div className="w-[11%] h-full">
+          <div className="w-[14%] h-full">
             <SideBar />
           </div>
           <div className="flex-1 h-full">

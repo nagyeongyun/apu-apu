@@ -21,17 +21,23 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   const { selectedCoord } = useCoordStore();
 
   // 지도 중심 업데이트
-  const updateMapCenter = (newCenter: naver.maps.LatLng) => {
-    if (mapRef.current) {
-      mapRef.current.setCenter(newCenter);
-      mapRef.current.setZoom(initMapLevel);
-    }
+  const updateMapCenter = (
+    newCenter: naver.maps.LatLng,
+    zoomLevel?: number,
+  ) => {
+    if (!mapRef.current) return;
+
+    mapRef.current.setOptions({
+      center: newCenter,
+      ...(zoomLevel && { zoom: zoomLevel }),
+    });
   };
 
   useEffect(() => {
     if (selectedCoord) {
       updateMapCenter(
         new naver.maps.LatLng(selectedCoord[0], selectedCoord[1]),
+        18,
       );
     }
   }, [selectedCoord]);
@@ -93,7 +99,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
 
   // 마커 표시하기
   const createMarkers = () => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || markersRef.current.length > 0) return;
 
     pools.forEach(({ name, latitude, longitude }) => {
       const marker = new naver.maps.Marker({
@@ -170,19 +176,20 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
     createMarkers();
     getCurrentLocation();
 
-    // 줌 인아웃 시 마커 업데이트
-    naver.maps.Event.addListener(mapRef.current, 'zoom_changed', () => {
-      if (mapRef.current !== null) {
-        updateMarkers(mapRef.current, markersRef.current);
-      }
-    });
+    // 지도 이동 시 마커 업데이트
+    const idleListener = naver.maps.Event.addListener(
+      mapRef.current,
+      'idle',
+      () => {
+        if (mapRef.current !== null) {
+          updateMarkers(mapRef.current, markersRef.current);
+        }
+      },
+    );
 
-    // 드래그 시 마커 업데이트
-    naver.maps.Event.addListener(mapRef.current, 'dragend', () => {
-      if (mapRef.current !== null) {
-        updateMarkers(mapRef.current, markersRef.current);
-      }
-    });
+    return () => {
+      naver.maps.Event.removeListener(idleListener);
+    };
   }, []);
 
   return (
