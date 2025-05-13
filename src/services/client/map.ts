@@ -1,12 +1,10 @@
-export const getNearbyPools = async (latitude: number, longitude: number) => {
-  const response = await fetch(
-    `/api/pool/nearby?lat=${latitude}&lng=${longitude}`,
-  );
-  const { data, error } = await response.json();
+import { apiClient } from '../apiClient';
+import { NearByPool, DetailPool } from '@/types/pool';
 
-  if (!response.ok) {
-    throw new Error(error);
-  }
+export const getNearbyPools = async (lat: number, lng: number) => {
+  return apiClient<NearByPool[]>(`/api/pool/nearby?lat=${lat}&lng=${lng}`);
+};
 
-  return data;
+export const getDetailPool = async (id: string) => {
+  return apiClient<DetailPool>(`/api/pool/${id}`);
 };

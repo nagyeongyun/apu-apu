@@ -12,6 +12,8 @@ import {
   updateMarkers,
 } from './mapUtils';
 import List from './List';
+import ModalPortal from '../modal/ModalPortal';
+import DetailModal from '../modal/DetailModal';
 
 const MAP_ID = 'map';
 const INIT_MAP_LEVEL = 14;
@@ -21,7 +23,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   const markersRef = useRef<naver.maps.Marker[]>([]);
   const userMarkerRef = useRef<naver.maps.Marker | null>(null);
   const [nearbyPools, setNearbyPools] = useState<NearByPool[]>([]);
-  const { selectedCoord } = useCoordStore();
+  const { setSelectedPoolId, selectedPoolId, selectedCoord } = useCoordStore();
   const { coords, address, isLoading, currentLocation } = useCurrentLocation();
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       });
     }
 
-    pools.forEach(({ name, latitude, longitude }) => {
+    pools.forEach(({ id, name, latitude, longitude }) => {
       const marker = createMarkerWithInfoWindow({
         position: new naver.maps.LatLng(latitude, longitude),
         iconUrl: '/images/pool-marker.svg',
@@ -41,8 +43,14 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
         map: mapRef.current as naver.maps.Map,
       });
 
+      marker.addListener('click', () => {
+        setSelectedPoolId(id);
+      });
+
       markersRef.current.push(marker);
     });
+
+    console.log('id', selectedPoolId);
 
     currentLocation();
 
@@ -106,6 +114,12 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   return (
     <div className="flex-1 h-full relative">
       <div id={MAP_ID} className="w-full h-full bg-gray-100" />
+      {selectedPoolId && (
+        <ModalPortal>
+          <DetailModal />
+        </ModalPortal>
+      )}
+
       <div className="absolute inset-y-10 right-10 w-[19%] bg-white p-5 rounded-lg pt-6 pb-16 shadow-md">
         <div className="flex items-center text-[1rem]">
           <button
