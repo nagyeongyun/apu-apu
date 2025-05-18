@@ -28,7 +28,6 @@ export default function DetailModal() {
         } else {
           setDetail(detail);
         }
-        console.log(detail);
       } catch (error) {
         console.error('detail pool error', error);
       }

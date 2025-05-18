@@ -1,10 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
-import { PoolInfo, NearByPool } from '@/types/pool';
+import { useEffect, useRef } from 'react';
+import { PoolInfo } from '@/types/pool';
 import { useCoordStore } from '@/store/coordStore';
-import { getNearbyPools } from '@/services/client/map';
 import useCurrentLocation from '../../hooks/map/useCurrentLocation';
 import {
   createMarkerWithInfoWindow,
@@ -22,9 +21,9 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
   const mapRef = useRef<naver.maps.Map | null>(null);
   const markersRef = useRef<naver.maps.Marker[]>([]);
   const userMarkerRef = useRef<naver.maps.Marker | null>(null);
-  const [nearbyPools, setNearbyPools] = useState<NearByPool[]>([]);
   const { setSelectedPoolId, selectedPoolId, selectedCoord } = useCoordStore();
-  const { coords, address, isLoading, currentLocation } = useCurrentLocation();
+  const { coords, address, isLoading, isError, currentLocation } =
+    useCurrentLocation();
 
   useEffect(() => {
     if (!mapRef.current) {
@@ -50,8 +49,6 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       markersRef.current.push(marker);
     });
 
-    console.log('id', selectedPoolId);
-
     currentLocation();
 
     const idleListener = naver.maps.Event.addListener(
@@ -68,15 +65,6 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       naver.maps.Event.removeListener(idleListener);
     };
   }, []);
-
-  const fetchNearbyPools = async () => {
-    try {
-      const pools = await getNearbyPools(coords[0], coords[1]);
-      setNearbyPools(pools);
-    } catch (error) {
-      console.error('nearby pools error', error);
-    }
-  };
 
   useEffect(() => {
     if (!userMarkerRef.current) {
@@ -97,8 +85,6 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       newCenter: new naver.maps.LatLng(coords[0], coords[1]),
       zoomLevel: INIT_MAP_LEVEL,
     });
-
-    fetchNearbyPools();
   }, [coords]);
 
   useEffect(() => {
@@ -120,7 +106,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
         </ModalPortal>
       )}
 
-      <div className="absolute inset-y-10 right-10 w-[19%] bg-white p-5 rounded-lg pt-6 pb-16 shadow-md">
+      <div className="absolute inset-y-10 right-10 w-[19.5%] bg-white p-5 rounded-lg pt-6 pb-16 shadow-md">
         <div className="flex items-center text-[1rem]">
           <button
             onClick={currentLocation}
@@ -130,7 +116,7 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
           </button>
           <p className="text-main">{isLoading ? '위치 찾는중...' : address}</p>
         </div>
-        <List nearbyPools={nearbyPools} />
+        <List coords={coords} isError={isError} isLoading={isLoading} />
       </div>
     </div>
   );

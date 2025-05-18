@@ -4,6 +4,7 @@ export interface CurrentLocationState {
   coords: Coordinates;
   address: string;
   isLoading: boolean;
+  isError: boolean;
 }
 
 export interface MarkerProps {

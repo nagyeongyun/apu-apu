@@ -9,6 +9,7 @@ export default function useCurrentLocation() {
     coords: INIT_COORD,
     address: '현재 위치 찾는중...',
     isLoading: true,
+    isError: false,
   });
 
   const getAddress = (coordinates: Coordinates) => {
@@ -37,6 +38,7 @@ export default function useCurrentLocation() {
         ...prev,
         address: ERROR_MSG,
         isLoading: false,
+        isError: true,
       }));
       return;
     }
@@ -51,6 +53,7 @@ export default function useCurrentLocation() {
           ...prev,
           coords: currentCoords,
           isLoading: false,
+          isError: false,
         }));
         getAddress(currentCoords);
       },
@@ -60,6 +63,7 @@ export default function useCurrentLocation() {
           ...prev,
           address: ERROR_MSG,
           isLoading: false,
+          isError: true,
         }));
       },
     );
@@ -73,6 +77,7 @@ export default function useCurrentLocation() {
     coords: locationState.coords,
     address: locationState.address,
     isLoading: locationState.isLoading,
+    isError: locationState.isError,
     currentLocation: getCurrentLocation,
   };
 }
