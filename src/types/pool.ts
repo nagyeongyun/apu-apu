@@ -28,7 +28,6 @@ export interface PoolInfo {
 export interface DetailRowProps {
   icon: string;
   alt: string;
-  size: number;
   children: React.ReactNode;
   multiline?: boolean;
   className?: string;

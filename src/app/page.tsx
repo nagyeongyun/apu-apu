@@ -18,12 +18,12 @@ export default async function Home() {
     <>
       <Script
         strategy="beforeInteractive"
-        src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_MAP_KEY}&submodules=geocoder`}
+        src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_MAP_KEY}&submodules=geocoder`}
       />
-      <main className="h-screen w-screen flex flex-col">
+      <main className="h-screen [height:100dvh] w-screen flex flex-col">
         <Nav />
         <div className="flex flex-row flex-1">
-          <div className="w-[14%] h-full">
+          <div className="hidden md:block lg:w-[200px] 2xl:w-[12%] h-full">
             <SideBar />
           </div>
           <div className="flex-1 h-full">

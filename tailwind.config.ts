@@ -14,6 +14,10 @@ export default {
         main: '#1E85CF',
         'main-100': '#ebf2f8',
       },
+      screens: {
+        '3xl': '2000px',
+      },
+
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'scale(0.95)' },
