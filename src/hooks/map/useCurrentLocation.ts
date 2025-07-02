@@ -12,6 +12,16 @@ export default function useCurrentLocation() {
     isError: false,
   });
 
+  const waitForNaverMap = () =>
+    new Promise<void>((resolve) => {
+      const check = () => {
+        if (typeof window.naver?.maps?.Service?.reverseGeocode === 'function')
+          resolve();
+        else setTimeout(check, 100);
+      };
+      check();
+    });
+
   const getAddress = (coordinates: Coordinates) => {
     const newCenter = new naver.maps.LatLng(coordinates[0], coordinates[1]);
     naver.maps.Service.reverseGeocode(
@@ -44,7 +54,7 @@ export default function useCurrentLocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const currentCoords: Coordinates = [
           position.coords.latitude,
           position.coords.longitude,
@@ -55,6 +65,8 @@ export default function useCurrentLocation() {
           isLoading: false,
           isError: false,
         }));
+
+        await waitForNaverMap();
         getAddress(currentCoords);
       },
       (error) => {
