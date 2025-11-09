@@ -13,7 +13,7 @@ export default function useCurrentLocation() {
   });
 
   const getAddress = (coordinates: Coordinates) => {
-    if (!window?.naver?.maps?.Service?.reverseGeocode) {
+    if (!naver?.maps?.Service?.reverseGeocode) {
       setTimeout(() => getAddress(coordinates), 100);
       return;
     }
