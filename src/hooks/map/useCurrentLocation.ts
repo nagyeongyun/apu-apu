@@ -13,6 +13,11 @@ export default function useCurrentLocation() {
   });
 
   const getAddress = (coordinates: Coordinates) => {
+    if (!window?.naver?.maps?.Service?.reverseGeocode) {
+      setTimeout(() => getAddress(coordinates), 100);
+      return;
+    }
+
     const newCenter = new naver.maps.LatLng(coordinates[0], coordinates[1]);
     naver.maps.Service.reverseGeocode(
       { coords: newCenter },
