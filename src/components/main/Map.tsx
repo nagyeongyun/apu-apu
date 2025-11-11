@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { PoolInfo } from '@/types/pool';
-import { useCoordStore } from '@/store/coordStore';
+import { useCoordStore } from '@/store/mapStore';
 import useCurrentLocation from '../../hooks/map/useCurrentLocation';
 import {
   createMarkerWithInfoWindow,

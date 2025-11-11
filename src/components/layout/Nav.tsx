@@ -35,11 +35,6 @@ export default function Nav() {
           </Link>
         </div>
       </div>
-      <div>
-        <Link href={'/'}>
-          <p className="mb-1 hover:text-main hover:font-normal">로그인</p>
-        </Link>
-      </div>
       <div
         className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden
       ${

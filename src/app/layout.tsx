@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import Nav from '@/components/layout/Nav';
 
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
@@ -21,9 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
-      <body className="text-neutral-800">
-        {children}
-        <div id="modal-root"></div>
+      <body className="h-screen [height:100dvh] w-screen">
+        <main className="h-full w-full flex flex-col">
+          <Nav />
+          <div className="flex-1">
+            {children}
+            <div id="modal-root"></div>
+          </div>
+        </main>
       </body>
     </html>
   );

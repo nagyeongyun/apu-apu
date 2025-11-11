@@ -1,12 +1,13 @@
 'use client';
 
 import Script from 'next/script';
-import { useState } from 'react';
 import Map from '@/components/main/Map';
 import { PoolInfo } from '@/types/pool';
+import { useMapStore } from '@/store/mapStore';
 
 export default function MapLoader({ pools }: { pools: PoolInfo[] }) {
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const isMapLoaded = useMapStore((state) => state.isMapLoaded);
+  const setIsMapLoaded = useMapStore((state) => state.setIsMapLoaded);
 
   return (
     <>
@@ -16,7 +17,6 @@ export default function MapLoader({ pools }: { pools: PoolInfo[] }) {
           setIsMapLoaded(true);
         }}
       />
-
       {isMapLoaded ? (
         <Map pools={pools} />
       ) : (

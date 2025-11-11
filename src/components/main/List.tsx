@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Coordinates } from '@/types/map';
 import { NearByPool } from '@/types/pool';
-import { useCoordStore } from '@/store/coordStore';
+import { useCoordStore } from '@/store/mapStore';
 import { getNearbyPools } from '@/services/client/map';
 
 export default function List({

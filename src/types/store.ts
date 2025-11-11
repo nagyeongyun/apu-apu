@@ -6,3 +6,8 @@ export interface CoordStore {
   setSelectedPoolId: (id: string | null) => void;
   setSelectedCoord: (coords: Coordinates) => void;
 }
+
+export interface MapStateStore {
+  isMapLoaded: boolean;
+  setIsMapLoaded: (loaded: boolean) => void;
+}

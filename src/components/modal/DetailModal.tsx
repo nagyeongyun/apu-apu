@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getDetailPool } from '@/services/client/map';
-import { useCoordStore } from '@/store/coordStore';
+import { useCoordStore } from '@/store/mapStore';
 import { DetailPool } from '@/types/pool';
 import { days, dayLabelMap } from '@/utils/constants';
 import DetailRow from './DetailRow';
@@ -62,10 +62,7 @@ export default function DetailModal() {
                   </p>
                 </div>
                 <button className="text-[#aaaaaa] hover:text-red-500">
-                  <DeleteIcon
-                    className="w-[10px] md:w-[13px]"
-                    onClick={handleClickDelete}
-                  />
+                  <DeleteIcon onClick={handleClickDelete} />
                 </button>
               </div>
               <div className="space-y-1 text-[0.7rem] sm:text-[0.75rem] md:text-[0.85rem] xl:text-[0.95rem]">
