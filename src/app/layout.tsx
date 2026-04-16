@@ -1,14 +1,8 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
+import { pretendard } from '@/font';
 import Nav from '@/components/layout/Nav';
-
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardVariable.woff2',
-  display: 'swap',
-  variable: '--font-pretendard',
-  weight: '45 920',
-});
+import SideBar from '@/components/layout/SideBar';
 
 export const metadata: Metadata = {
   title: '어푸어푸',
@@ -25,9 +19,14 @@ export default function RootLayout({
       <body className="h-screen [height:100dvh] w-screen">
         <main className="h-full w-full flex flex-col">
           <Nav />
-          <div className="flex-1">
-            {children}
-            <div id="modal-root"></div>
+          <div className="flex flex-1">
+            <div className="hidden md:block lg:w-[200px] 2xl:w-[12%] h-full">
+              <SideBar />
+            </div>
+            <div className="flex-1">
+              {children}
+              <div id="modal-root"></div>
+            </div>
           </div>
         </main>
       </body>
