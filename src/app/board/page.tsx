@@ -1,9 +1,9 @@
-import DeleteIcon from '/public/images/delete-icon.svg';
 import { SCDream } from '@/font';
-import WriteBtn from '@/components/board/WriteBtn';
 import { getPosts } from '@/services/server/board';
 import { PostInfo } from '@/types/board';
 import { formatDateTime } from '@/utils/formatDate';
+import DeleteBtn from '@/components/board/DeleteBtn';
+import WriteBtn from '@/components/board/WriteBtn';
 
 export default async function Board() {
   let posts: PostInfo[] = [];
@@ -25,9 +25,7 @@ export default async function Board() {
           >
             <div className="flex items-center justify-between">
               <p className="font-semibold text-[1.1rem]">{post.name}</p>
-              <button className="text-[#aaaaaa] hover:text-red-500">
-                <DeleteIcon />
-              </button>
+              <DeleteBtn postId={post.id} />
             </div>
             <hr className="mt-3 mb-4" />
             <div className="flex-1 flex flex-col min-h-0">

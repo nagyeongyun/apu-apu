@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { writePostSchema, WritePostFormValues } from '@/types/board';
 import EyeIcon from '/public/images/eye.svg';
 import EyeOffIcon from '/public/images/eye-off.svg';
-import { createPost } from '@/services/client/board';
+import { createPostAction } from '@/app/board/actions';
 
 export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +18,8 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
     handleSubmit,
     reset,
     watch,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<WritePostFormValues>({
     resolver: zodResolver(writePostSchema),
@@ -37,17 +39,33 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
 
   const onSubmit = async (data: WritePostFormValues) => {
     try {
-      await createPost(data);
+      clearErrors('root');
+
+      const result = await createPostAction(data);
+
+      if (!result.success) {
+        setError('root', {
+          type: 'server',
+          message: result.error || '게시글 등록에 실패했습니다.',
+        });
+        return;
+      }
+
       onClose();
       reset();
     } catch (error) {
       console.error(error);
+      setError('root', {
+        type: 'server',
+        message: '게시글 등록 중 오류가 발생했습니다.',
+      });
     }
   };
 
   const handleClose = () => {
     onClose();
     reset();
+    clearErrors();
   };
 
   return (
@@ -111,7 +129,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     maxLength={8}
-                    placeholder="삭제 시 필요해요."
+                    placeholder="삭제 시 필요해요!"
                     className="h-11 w-full rounded-md border border-gray-200 pl-3 pr-10 text-[0.95rem] outline-none focus:border-gray-400"
                     {...register('password', {
                       onChange: (e) => {
@@ -161,6 +179,12 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
             <div className="mb-5 text-right text-[0.78rem] text-gray-400 select-none">
               {contentValue.length}/100
             </div>
+
+            {errors.root?.message && (
+              <p className="mb-4 text-[0.8rem] text-red-500">
+                {errors.root.message}
+              </p>
+            )}
 
             <div className="flex justify-end gap-2">
               <button
