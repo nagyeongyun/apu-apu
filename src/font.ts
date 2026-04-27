@@ -19,5 +19,10 @@ export const SCDream = localFont({
       weight: '400',
       style: 'normal',
     },
+    {
+      path: '../public/fonts/SCDream5.woff2',
+      weight: '500',
+      style: 'normal',
+    },
   ],
 });

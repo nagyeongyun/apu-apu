@@ -10,6 +10,12 @@ export interface WriteModalProps {
   onClose: () => void;
 }
 
+export interface DeleteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  postId: string;
+}
+
 export const writePostSchema = z.object({
   name: z.string().trim().min(1, '닉네임을 입력해주세요.'),
   password: z

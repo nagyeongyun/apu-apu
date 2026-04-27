@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import DeleteIcon from '/public/images/delete-icon.svg';
 import DeleteModal from './DeleteModal';
+import TrashIcon from '/public/images/trash-icon.svg';
 
 export default function DeleteBtn({ postId }: { postId: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +12,9 @@ export default function DeleteBtn({ postId }: { postId: string }) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="text-[#aaaaaa] hover:text-red-500"
+        className="text-[#cecece] hover:text-red-500"
       >
-        <DeleteIcon />
+        <TrashIcon className="w-4 sm:w-5" />
       </button>
 
       <DeleteModal
