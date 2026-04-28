@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import DeleteIcon from '/public/images/delete-icon.svg';
+import CloseIcon from '/public/images/close-icon.svg';
 import { usePathname } from 'next/navigation';
 import MapIcon from '/public/images/map-icon.svg';
 import BoardIcon from '/public/images/board-icon.svg';
@@ -23,12 +23,12 @@ export default function SideBar({ onClose }: { onClose?: () => void }) {
   ];
 
   return (
-    <div className="flex flex-col border-r border-neutral-200 h-full py-8 md:py-6 px-[1.2rem] md:px-[1.8rem] space-y-2">
+    <div className="flex flex-col border-r border-neutral-200 h-full py-6 px-[1.2rem] md:px-[1.8rem] space-y-2">
       <button
-        className="block md:hidden mb-10 ml-2 text-[#616161]"
+        className="self-end md:hidden mb-6 mr-1 text-[#616161]"
         onClick={onClose}
       >
-        <DeleteIcon width={10} height={10} />
+        <CloseIcon width={10} height={10} />
       </button>
 
       {menuList.map((menu) => {
@@ -50,7 +50,7 @@ export default function SideBar({ onClose }: { onClose?: () => void }) {
                 {menu.icon}
               </div>
               <p
-                className={`${
+                className={`mt-[0.5px] ${
                   isActive
                     ? 'text-neutral-800 font-semibold'
                     : 'text-neutral-600'

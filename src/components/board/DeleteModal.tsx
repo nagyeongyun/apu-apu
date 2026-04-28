@@ -5,7 +5,7 @@ import ModalPortal from '@/components/modal/ModalPortal';
 import { DeleteModalProps } from '@/types/board';
 import EyeIcon from '/public/images/eye.svg';
 import EyeOffIcon from '/public/images/eye-off.svg';
-import DeleteIcon from '/public/images/delete-icon.svg';
+import CloseIcon from '/public/images/close-icon.svg';
 import { deletePostAction } from '@/app/board/actions';
 
 export default function DeleteModal({
@@ -71,9 +71,9 @@ export default function DeleteModal({
             <button
               type="button"
               onClick={handleClose}
-              className="text-[#aaaaaa] hover:text-red-500"
+              className="text-[#aaaaaa] hover:text-red-400"
             >
-              <DeleteIcon className="w-3" />
+              <CloseIcon className="w-3" />
             </button>
           </div>
 

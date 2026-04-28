@@ -6,7 +6,7 @@ import { useCoordStore } from '@/store/mapStore';
 import { DetailPool } from '@/types/pool';
 import { days, dayLabelMap } from '@/utils/constants';
 import DetailRow from './DetailRow';
-import DeleteIcon from '/public/images/delete-icon.svg';
+import CloseIcon from '/public/images/close-icon.svg';
 
 export default function DetailModal() {
   const { selectedPoolId, setSelectedPoolId } = useCoordStore();
@@ -62,7 +62,7 @@ export default function DetailModal() {
                   </p>
                 </div>
                 <button className="text-[#aaaaaa] hover:text-red-500">
-                  <DeleteIcon onClick={handleClickDelete} />
+                  <CloseIcon onClick={handleClickDelete} />
                 </button>
               </div>
               <div className="space-y-1 text-[0.7rem] sm:text-[0.75rem] md:text-[0.85rem] xl:text-[0.95rem]">

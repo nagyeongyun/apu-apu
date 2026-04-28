@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { writePostSchema, WritePostFormValues } from '@/types/board';
 import EyeIcon from '/public/images/eye.svg';
 import EyeOffIcon from '/public/images/eye-off.svg';
-import DeleteIcon from '/public/images/delete-icon.svg';
+import CloseIcon from '/public/images/close-icon.svg';
 import { createPostAction } from '@/app/board/actions';
 
 export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
@@ -73,7 +73,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
     <ModalPortal>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35">
         <div
-          className="w-full max-w-[20rem] sm:max-w-[32rem] rounded-xl bg-white px-6 py-6 shadow-xl"
+          className="w-full max-w-[20rem] sm:max-w-[32rem] rounded-xl bg-white p-5 sm:p-6 shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-5 flex items-center justify-between">
@@ -85,7 +85,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
               onClick={handleClose}
               className="text-[#aaaaaa] hover:text-red-500"
             >
-              <DeleteIcon className="w-3" />
+              <CloseIcon className="w-3" />
             </button>
           </div>
 
@@ -170,7 +170,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
               </div>
             </div>
 
-            <div className="mb-6 flex flex-col gap-1">
+            <div className="mb-4 sm:mb-5 flex flex-col gap-1">
               <div className="flex items-center justify-between gap-1">
                 <label
                   htmlFor="content"
@@ -186,7 +186,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
                 id="content"
                 maxLength={100}
                 placeholder="내용을 입력하세요."
-                className="h-24 sm:h-40 resize-none rounded-md border border-gray-200 p-3 text-[0.75rem] sm:text-[0.95rem] outline-none focus:border-gray-400"
+                className="h-20 sm:h-40 resize-none rounded-md border border-gray-200 p-3 text-[0.75rem] sm:text-[0.95rem] outline-none focus:border-gray-400"
                 {...register('content')}
               />
               {errors.content && (

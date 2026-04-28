@@ -12,7 +12,7 @@ export default function DeleteBtn({ postId }: { postId: string }) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="text-[#cecece] hover:text-red-500"
+        className="text-[#cecece] hover:text-red-400"
       >
         <TrashIcon className="w-4 sm:w-5" />
       </button>

@@ -47,7 +47,7 @@ export default function Nav() {
       />
       <div
         className={`fixed inset-y-0 left-0 z-50 bg-white w-[180px] shadow-md md:hidden
-      transform transition-transform duration-200
+      transform transition-transform duration-500
       ${showSidebar ? 'translate-x-0' : '-translate-x-full'}
     `}
       >
