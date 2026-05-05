@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import ModalPortal from '@/components/modal/ModalPortal';
 import { DeleteModalProps } from '@/types/board';
 import EyeIcon from '/public/images/eye.svg';
@@ -17,6 +18,7 @@ export default function DeleteModal({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   if (!isOpen) return null;
 
@@ -47,6 +49,10 @@ export default function DeleteModal({
         setErrorMessage(result.error || '게시글 삭제에 실패했습니다.');
         return;
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
 
       handleClose();
     } catch (error) {

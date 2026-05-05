@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import ModalPortal from '@/components/modal/ModalPortal';
 import { WriteModalProps } from '@/types/board';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +14,7 @@ import { createPostAction } from '@/app/board/actions';
 
 export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -51,6 +53,10 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
         });
         return;
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
 
       onClose();
       reset();
