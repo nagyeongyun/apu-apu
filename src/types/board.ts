@@ -5,6 +5,11 @@ type PostRow = Database['public']['Tables']['posts']['Row'];
 
 export type PostInfo = Pick<PostRow, 'id' | 'name' | 'content' | 'created_at'>;
 
+export type PostsPage = {
+  posts: PostInfo[];
+  nextPage: number | null;
+};
+
 export interface WriteModalProps {
   isOpen: boolean;
   onClose: () => void;
