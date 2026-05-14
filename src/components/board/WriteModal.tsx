@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import ModalPortal from '@/components/modal/ModalPortal';
 import { WriteModalProps } from '@/types/board';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,9 +12,12 @@ import EyeOffIcon from '/public/images/eye-off.svg';
 import CloseIcon from '/public/images/close-icon.svg';
 import { createPostAction } from '@/app/board/actions';
 
-export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
+export default function WriteModal({ onClose }: WriteModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const queryClient = useQueryClient();
+  const { mutateAsync: createPost, isPending } = useMutation({
+    mutationFn: createPostAction,
+  });
 
   const {
     register,
@@ -34,8 +37,6 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
     mode: 'onChange',
   });
 
-  if (!isOpen) return null;
-
   const nameValue = watch('name') || '';
   const passwordValue = watch('password') || '';
   const contentValue = watch('content') || '';
@@ -44,7 +45,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
     try {
       clearErrors('root');
 
-      const result = await createPostAction(data);
+      const result = await createPost(data);
 
       if (!result.success) {
         setError('root', {
@@ -62,6 +63,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
       reset();
     } catch (error) {
       console.error(error);
+
       setError('root', {
         type: 'server',
         message: '게시글 등록 중 오류가 발생했습니다.',
@@ -78,10 +80,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35">
-        <div
-          className="w-full max-w-[20rem] sm:max-w-[32rem] rounded-xl bg-white p-5 sm:p-6 shadow-xl"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="w-full max-w-[20rem] sm:max-w-[32rem] rounded-xl bg-white p-5 sm:p-6 shadow-xl">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-[1rem] sm:text-[1.1rem] font-semibold">
               글쓰기
@@ -217,7 +216,7 @@ export default function WriteModal({ isOpen, onClose }: WriteModalProps) {
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isPending}
                 className="rounded-md bg-main px-4 py-2 text-[0.8rem] sm:text-[0.9rem] text-white hover:bg-[#1974b5] disabled:opacity-50"
               >
                 등록

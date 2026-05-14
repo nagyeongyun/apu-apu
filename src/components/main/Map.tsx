@@ -102,7 +102,10 @@ export default function Map({ pools }: { pools: PoolInfo[] }) {
       <div id={MAP_ID} className="w-full h-full bg-gray-100" />
       {selectedPoolId && (
         <ModalPortal>
-          <DetailModal />
+          <DetailModal
+            poolId={selectedPoolId}
+            onClose={() => setSelectedPoolId(null)}
+          />
         </ModalPortal>
       )}
       <div className="absolute bottom-0 w-full h-1/2 md:top-4 md:bottom-4 md:right-8 md:h-auto md:inset-y-10 md:w-[250px] xl:w-[270px] 3xl:w-[350px] md:rounded-xl md:border-none bg-white p-5 rounded-t-xl pt-6 pb-16 border border-t-gray-200">

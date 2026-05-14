@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import ModalPortal from '@/components/modal/ModalPortal';
 import { DeleteModalProps } from '@/types/board';
 import EyeIcon from '/public/images/eye.svg';
@@ -9,25 +9,16 @@ import EyeOffIcon from '/public/images/eye-off.svg';
 import CloseIcon from '/public/images/close-icon.svg';
 import { deletePostAction } from '@/app/board/actions';
 
-export default function DeleteModal({
-  isOpen,
-  onClose,
-  postId,
-}: DeleteModalProps) {
+export default function DeleteModal({ onClose, postId }: DeleteModalProps) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
-  if (!isOpen) return null;
-
-  const handleClose = () => {
-    onClose();
-    setPassword('');
-    setErrorMessage('');
-    setShowPassword(false);
-  };
+  const { mutateAsync: deletePost, isPending } = useMutation({
+    mutationFn: ({ postId, password }: { postId: string; password: string }) =>
+      deletePostAction(postId, password),
+  });
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,10 +31,12 @@ export default function DeleteModal({
     }
 
     try {
-      setIsSubmitting(true);
       setErrorMessage('');
 
-      const result = await deletePostAction(postId, trimmedPassword);
+      const result = await deletePost({
+        postId,
+        password: trimmedPassword,
+      });
 
       if (!result.success) {
         setErrorMessage(result.error || '게시글 삭제에 실패했습니다.');
@@ -54,29 +47,24 @@ export default function DeleteModal({
         queryKey: ['posts'],
       });
 
-      handleClose();
+      onClose();
     } catch (error) {
       console.error(error);
       setErrorMessage('게시글 삭제 중 오류가 발생했습니다.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35">
-        <div
-          className="w-full max-w-[20rem] sm:max-w-[28rem] rounded-xl bg-white px-6 py-5 shadow-xl"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="w-full max-w-[20rem] sm:max-w-[28rem] rounded-xl bg-white px-6 py-5 shadow-xl">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-[1rem] sm:text-[1.1rem] font-semibold">
               글 삭제
             </h2>
             <button
               type="button"
-              onClick={handleClose}
+              onClick={onClose}
               className="text-[#aaaaaa] hover:text-red-400"
             >
               <CloseIcon className="w-3" />
@@ -133,14 +121,14 @@ export default function DeleteModal({
             <div className="flex justify-end gap-2">
               <button
                 type="button"
-                onClick={handleClose}
+                onClick={onClose}
                 className="rounded-md bg-gray-100 px-4 py-2 text-[0.8rem] sm:text-[0.9rem] text-gray-700 hover:bg-gray-200"
               >
                 취소
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
                 className="rounded-md bg-red-500 px-4 py-2 text-[0.8rem] sm:text-[0.9rem] text-white hover:bg-red-600 disabled:opacity-50"
               >
                 삭제

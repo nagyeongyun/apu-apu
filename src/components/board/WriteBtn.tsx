@@ -16,7 +16,7 @@ export default function WriteBtn() {
         글쓰기
       </button>
 
-      <WriteModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {isOpen && <WriteModal onClose={() => setIsOpen(false)} />}
     </>
   );
 }

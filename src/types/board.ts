@@ -11,12 +11,10 @@ export type PostsPage = {
 };
 
 export interface WriteModalProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
 export interface DeleteModalProps {
-  isOpen: boolean;
   onClose: () => void;
   postId: string;
 }

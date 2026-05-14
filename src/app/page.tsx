@@ -8,7 +8,7 @@ export default async function Home() {
   try {
     pools = await getPoolInfo();
   } catch (error) {
-    console.error('Error pool info:', error);
+    console.error(error);
   }
 
   return <MapLoader pools={pools} />;

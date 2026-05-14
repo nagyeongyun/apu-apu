@@ -32,3 +32,8 @@ export interface DetailRowProps {
   multiline?: boolean;
   className?: string;
 }
+
+export interface DetailModalProps {
+  poolId: string;
+  onClose: () => void;
+}

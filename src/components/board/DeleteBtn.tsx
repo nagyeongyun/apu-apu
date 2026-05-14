@@ -17,11 +17,9 @@ export default function DeleteBtn({ postId }: { postId: string }) {
         <TrashIcon className="w-4 sm:w-5" />
       </button>
 
-      <DeleteModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        postId={postId}
-      />
+      {isOpen && (
+        <DeleteModal onClose={() => setIsOpen(false)} postId={postId} />
+      )}
     </>
   );
 }

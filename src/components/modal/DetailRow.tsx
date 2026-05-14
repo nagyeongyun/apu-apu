@@ -22,7 +22,7 @@ export default function DetailRow({
           className="object-contain"
         />
       </div>
-      <div className={`truncate ${multiline ? '-space-y-1 -mt-[3.5px]' : ''}`}>
+      <div className={`${multiline ? '-space-y-1 -mt-[3.5px]' : 'truncate'}`}>
         {children}
       </div>
     </div>
